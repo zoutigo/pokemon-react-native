@@ -13,21 +13,22 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {PokemonList} from '../data/PokemonList';
-
 import {Pokemon} from '../models/Pokemon';
+import * as commonStyle from '../utils/commonStyle';
+import TestView from './TestView';
 
 const PokemonInfo = ({name, level, isMale, src, onClickPokemon}: Pokemon) => {
   return (
-    <View>
-      <Text>This is a pokemon</Text>
+    <>
+      <Text style={styles.text_appeared}>A new Pokemon appeared !</Text>
+      <TouchableOpacity onPress={(): void => onClickPokemon()}>
+        <Image source={src} style={styles.imagePokemon} />
+      </TouchableOpacity>
       <Text>
         Name : {name}. Level: {level}
       </Text>
       {isMale ? <Text>this is a male</Text> : <Text>this is a female</Text>}
-      <TouchableOpacity onPress={(): void => onClickPokemon()}>
-        <Image source={src} style={styles.imagePokemon} />
-      </TouchableOpacity>
-    </View>
+    </>
   );
 };
 
@@ -61,58 +62,91 @@ const HomeView = () => {
   };
 
   return (
-    <View>
-      <Text> Value: {counterPokedex} </Text>
-      <Button title="Next" onPress={onNext} />
-      <Button title="Previous" onPress={onPrevious} />
-      <PokemonInfo
-        id={pokeList[counterPokedex].id}
-        name={pokeList[counterPokedex].name}
-        level={pokeList[counterPokedex].level}
-        isMale={pokeList[counterPokedex].isMale}
-        src={pokeList[counterPokedex].src}
-        onClickPokemon={() => {
-          getNamePokemon(pokeList[counterPokedex].name);
-          modifyLevel();
-        }}
-      />
-      {/* <FlatList
-        data={PokemonList.reverse()}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item}): any => (
-          <PokemonInfo
-            id={item.id}
-            name={item.name}
-            level={item.level}
-            isMale={item.isMale}
-            src={item.src}
+    <View style={styles.main_container}>
+      <View style={styles.title_container}>
+        <Text style={styles.text_title}>Pokedex Application </Text>
+      </View>
+      <View style={styles.pokemon_container}>
+        <PokemonInfo
+          id={pokeList[counterPokedex].id}
+          name={pokeList[counterPokedex].name}
+          level={pokeList[counterPokedex].level}
+          isMale={pokeList[counterPokedex].isMale}
+          src={pokeList[counterPokedex].src}
+          onClickPokemon={() => {
+            getNamePokemon(pokeList[counterPokedex].name);
+            modifyLevel();
+          }}
+        />
+      </View>
+      <View style={styles.button_container}>
+        <TouchableOpacity style={styles.buttonNextPrevious} onPress={onNext}>
+          <Image
+            source={require('../assets/icons/left-arrow.png')}
+            style={styles.iconButton}
           />
-        )}
-      /> */}
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonNextPrevious}
+          onPress={onPrevious}>
+          <Image
+            source={require('../assets/icons/right-arrow.png')}
+            style={styles.iconButton}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  main_container: {
+    flex: 1,
+  },
+
+  title_container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+
+  pokemon_container: {
+    flex: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  button_container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+
+  text_title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: 'rgb(200, 0, 0)',
+    marginTop: 30,
+  },
   imagePokemon: {
-    height: 200,
     width: 200,
+    height: 200,
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+
+  iconButton: {
+    width: 40,
+    height: 40,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
+
+  text_appeared: {
+    marginBottom: 20,
+    fontStyle: 'italic',
     fontSize: 18,
-    fontWeight: '400',
   },
-  highlight: {
-    fontWeight: '700',
+
+  //@ts-ignore
+  buttonNextPrevious: {
+    ...commonStyle.elevationButton,
+    ...commonStyle.roundedButton,
   },
 });
 
