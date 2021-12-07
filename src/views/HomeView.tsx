@@ -10,12 +10,13 @@ import {
   Image,
   FlatList,
   Button,
+  TouchableOpacity,
 } from 'react-native';
 import {PokemonList} from '../data/PokemonList';
 
 import {Pokemon} from '../models/Pokemon';
 
-const PokemonInfo = ({name, level, isMale, src}: Pokemon) => {
+const PokemonInfo = ({name, level, isMale, src, onClickPokemon}: Pokemon) => {
   return (
     <View>
       <Text>This is a pokemon</Text>
@@ -23,20 +24,29 @@ const PokemonInfo = ({name, level, isMale, src}: Pokemon) => {
         Name : {name}. Level: {level}
       </Text>
       {isMale ? <Text>this is a male</Text> : <Text>this is a female</Text>}
-      <Image source={src} style={styles.imagePokemon} />
+      <TouchableOpacity onPress={(): void => onClickPokemon()}>
+        <Image source={src} style={styles.imagePokemon} />
+      </TouchableOpacity>
     </View>
   );
 };
 
 const HomeView = () => {
-  const name = 'Pikachu';
-  const level: number = 15;
-  const isMale: boolean = true;
-
   const [counterPokedex, setCounterPokedex] = useState(0);
+  const [pokeList, setPokeList] = useState(PokemonList);
+
+  const getNamePokemon = (namePokemon: string) => {
+    console.log('my name is:', namePokemon);
+  };
+
+  const modifyLevel = () => {
+    const newList = [...pokeList];
+    newList[counterPokedex].level = pokeList[counterPokedex].level + 5;
+    setPokeList(newList);
+  };
 
   const onNext = () => {
-    if (counterPokedex === PokemonList.length - 1) {
+    if (counterPokedex === pokeList.length - 1) {
       setCounterPokedex(0);
     } else {
       setCounterPokedex(prev => prev + 1);
@@ -44,7 +54,7 @@ const HomeView = () => {
   };
   const onPrevious = () => {
     if (counterPokedex === 0) {
-      setCounterPokedex(PokemonList.length - 1);
+      setCounterPokedex(pokeList.length - 1);
     } else {
       setCounterPokedex(prev => prev - 1);
     }
@@ -56,11 +66,15 @@ const HomeView = () => {
       <Button title="Next" onPress={onNext} />
       <Button title="Previous" onPress={onPrevious} />
       <PokemonInfo
-        id={PokemonList[counterPokedex].id}
-        name={PokemonList[counterPokedex].name}
-        level={PokemonList[counterPokedex].level}
-        isMale={PokemonList[counterPokedex].isMale}
-        src={PokemonList[counterPokedex].src}
+        id={pokeList[counterPokedex].id}
+        name={pokeList[counterPokedex].name}
+        level={pokeList[counterPokedex].level}
+        isMale={pokeList[counterPokedex].isMale}
+        src={pokeList[counterPokedex].src}
+        onClickPokemon={() => {
+          getNamePokemon(pokeList[counterPokedex].name);
+          modifyLevel();
+        }}
       />
       {/* <FlatList
         data={PokemonList.reverse()}
