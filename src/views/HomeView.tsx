@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -8,24 +8,14 @@ import {
   useColorScheme,
   View,
   Image,
+  FlatList,
+  Button,
 } from 'react-native';
+import {PokemonList} from '../data/PokemonList';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Pokemon} from '../models/Pokemon';
 
-type PokemonInfoType = {
-  name: string;
-  level: number;
-  isMale: boolean;
-  src: any;
-};
-
-const PokemonInfo = ({name, level, isMale, src}: PokemonInfoType) => {
+const PokemonInfo = ({name, level, isMale, src}: Pokemon) => {
   return (
     <View>
       <Text>This is a pokemon</Text>
@@ -43,20 +33,48 @@ const HomeView = () => {
   const level: number = 15;
   const isMale: boolean = true;
 
+  const [counterPokedex, setCounterPokedex] = useState(0);
+
+  const onNext = () => {
+    if (counterPokedex === PokemonList.length - 1) {
+      setCounterPokedex(0);
+    } else {
+      setCounterPokedex(prev => prev + 1);
+    }
+  };
+  const onPrevious = () => {
+    if (counterPokedex === 0) {
+      setCounterPokedex(PokemonList.length - 1);
+    } else {
+      setCounterPokedex(prev => prev - 1);
+    }
+  };
+
   return (
     <View>
+      <Text> Value: {counterPokedex} </Text>
+      <Button title="Next" onPress={onNext} />
+      <Button title="Previous" onPress={onPrevious} />
       <PokemonInfo
-        name={name}
-        level={level}
-        isMale={isMale}
-        src={require('../assets/images/25.png')}
+        id={PokemonList[counterPokedex].id}
+        name={PokemonList[counterPokedex].name}
+        level={PokemonList[counterPokedex].level}
+        isMale={PokemonList[counterPokedex].isMale}
+        src={PokemonList[counterPokedex].src}
       />
-      <PokemonInfo
-        name={name}
-        level={level}
-        isMale={isMale}
-        src={require('../assets/images/127.png')}
-      />
+      {/* <FlatList
+        data={PokemonList.reverse()}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({item}): any => (
+          <PokemonInfo
+            id={item.id}
+            name={item.name}
+            level={item.level}
+            isMale={item.isMale}
+            src={item.src}
+          />
+        )}
+      /> */}
     </View>
   );
 };
